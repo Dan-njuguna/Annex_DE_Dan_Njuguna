@@ -1,0 +1,52 @@
+schema: '2.0'
+stages:
+  profile_data:
+    cmd: uv run python -m scripts.data_profiling
+    deps:
+    - path: data/raw/
+      hash: md5
+      md5: 07ef2711d22fbbf4fe979e8fc569c324.dir
+      size: 42020431
+      nfiles: 8
+    - path: scripts/data_profiling.py
+      hash: md5
+      md5: 98d7696b01cbc29f704036003f62dea4
+      size: 12608
+    - path: scripts/utils.py
+      hash: md5
+      md5: 15be60576a66bd1f1620fd54087dc919
+      size: 1101
+    outs:
+    - path: outputs/data_quality_report.md
+      hash: md5
+      md5: a3553c36ed3eced6f16c33234fc17502
+      size: 4043
+  clean_data:
+    cmd: uv run python -m scripts.data_cleaning
+    deps:
+    - path: data/raw/
+      hash: md5
+      md5: 07ef2711d22fbbf4fe979e8fc569c324.dir
+      size: 42020431
+      nfiles: 8
+    - path: scripts/data_cleaning.py
+      hash: md5
+      md5: 0907de1797bf27637f193b3e49dd0ab1
+      size: 8771
+    - path: scripts/utils.py
+      hash: md5
+      md5: 15be60576a66bd1f1620fd54087dc919
+      size: 1101
+    outs:
+    - path: outputs/cleaned_summary.csv
+      hash: md5
+      md5: 375880a5ff1b6bd0ff5600a90340e0a6
+      size: 15710387
+    - path: outputs/customer_master.csv
+      hash: md5
+      md5: b1001259cdccb47a76ed69b3b54501a2
+      size: 22480213
+    - path: outputs/nps_responses.csv
+      hash: md5
+      md5: b2b4aff856a4c92dbb283501c6daf2a9
+      size: 769968
