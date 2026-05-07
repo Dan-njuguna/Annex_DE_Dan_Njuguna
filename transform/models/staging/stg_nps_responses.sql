@@ -1,0 +1,19 @@
+SELECT
+    submission_id,
+    respondent_id,
+    submitted_at,
+    loan_id,
+    nps_score,
+    main_reason,
+    improvement_feedback,
+    happy_device,
+    happy_service,
+    payment_delay,
+    difficulty_support,
+    battery_issues,
+    used_app,
+    preferred_channel,
+    phone_lock_issue,
+    other_feedback,
+    ingested_at
+FROM {{ source('public', 'nps_responses') }}

@@ -1,0 +1,68 @@
+# DVC Pipeline — ABC Phones ETL
+#
+# Run:   uv run dvc repro
+# View:  uv run dvc dag
+# Graph: uv run dvc dag --md
+
+stages:
+  profile_data:
+    cmd: uv run python -m scripts.data_profiling
+    deps:
+      - scripts/data_profiling.py
+      - scripts/utils.py
+      - data/raw/
+    outs:
+      - outputs/data_quality_report.md:
+          cache: false
+
+  clean_data:
+    cmd: uv run python -m scripts.data_cleaning
+    deps:
+      - scripts/data_cleaning.py
+      - scripts/utils.py
+      - data/raw/
+    outs:
+      - outputs/cleaned_summary.csv
+      - outputs/customer_master.csv
+      - outputs/nps_responses.csv
+
+  engineer_features:
+    cmd: uv run python -m scripts.feature_engineering
+    deps:
+      - scripts/feature_engineering.py
+      - scripts/data_cleaning.py
+      - scripts/utils.py
+      - outputs/cleaned_summary.csv
+    outs:
+      - outputs/credit_enriched.csv
+
+  check_quality:
+    cmd: DQ_WEBHOOK_URL="" uv run python -m scripts.quality_checks
+    deps:
+      - scripts/quality_checks.py
+      - outputs/credit_enriched.csv
+    outs:
+      - outputs/dq_check_results.json:
+          cache: false
+
+  analyze:
+    cmd: uv run python -m scripts.analysis
+    deps:
+      - scripts/analysis.py
+      - outputs/credit_enriched.csv
+    outs:
+      - outputs/portfolio_metrics.csv:
+          cache: false
+      - outputs/plots/:
+          cache: false
+
+  load_to_db:
+    cmd: uv run python -m scripts.load_to_db
+    deps:
+      - scripts/load_to_db.py
+      - outputs/cleaned_summary.csv
+      - outputs/customer_master.csv
+      - outputs/nps_responses.csv
+    outs:
+      - outputs/.db_loaded:
+          cache: false

@@ -1,0 +1,13 @@
+abcphones:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('DB_HOST', 'localhost') }}"
+      port: "{{ env_var('DB_PORT', '5432') | int }}"
+      user: "{{ env_var('DB_USER', 'abcphones') }}"
+      password: "{{ env_var('DB_PASSWORD', 'abcphones_secret') }}"
+      dbname: "{{ env_var('DB_NAME', 'abcphones') }}"
+      schema: public
+      threads: 4
+      keepalives_idle: 0

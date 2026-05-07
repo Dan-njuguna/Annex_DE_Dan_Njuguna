@@ -1,0 +1,21 @@
+SELECT
+    loan_id,
+    sale_id,
+    sale_date,
+    returned,
+    return_date,
+    sale_type,
+    seller,
+    seller_type,
+    cash_price,
+    loan_price,
+    client_model,
+    business_model,
+    loan_term,
+    product_name,
+    model,
+    date_of_birth,
+    citizenship,
+    gender,
+    ingested_at
+FROM {{ source('public', 'customer_master') }}

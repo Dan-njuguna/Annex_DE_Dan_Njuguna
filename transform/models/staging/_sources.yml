@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: public
+    database: abcphones
+    schema: public
+    tables:
+      - name: cleaned_credit_data
+        description: "Cleaned and enriched credit account data"
+      - name: customer_master
+        description: "Customer master records with DOB and demographics"
+      - name: nps_responses
+        description: "Net Promoter Score survey responses"
+      - name: portfolio_metrics
+        description: "Computed portfolio health metrics per snapshot date"
