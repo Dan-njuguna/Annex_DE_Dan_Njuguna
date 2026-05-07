@@ -1,0 +1,70 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+.Python
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Environment
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter
+.ipynb_checkpoints/
+
+# DVC
+.dvc/logs/
+.dvc/cache/
+.dvc/tmp/
+
+# dbt
+transform/target/
+transform/dbt_packages/
+transform/logs/
+
+# Ruff
+.ruff_cache/
+
+# Raw data (user-provided)
+data/raw/**
+!data/raw/**/.gitkeep
+
+# Generated outputs
+outputs/*.csv
+outputs/*.json
+outputs/*.md
+outputs/plots/
+outputs/.db_loaded
+!outputs/.gitkeep
+
+# Pipeline design (generated)
+pipeline_design/*
+!pipeline_design/.gitkeep
+
+# Slides (generated)
+slides/*
+!slides/.gitkeep
+
+# DVC pipeline lock (auto-generated)
+dvc.lock
+
+# Docker
+.docker/
+
+# OS
+.DS_Store
+Thumbs.db
