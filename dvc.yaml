@@ -60,7 +60,7 @@ stages:
     cmd: uv run python -m scripts.load_to_db
     deps:
       - scripts/load_to_db.py
-      - outputs/cleaned_summary.csv
+      - outputs/credit_enriched.csv
       - outputs/customer_master.csv
       - outputs/nps_responses.csv
     outs:

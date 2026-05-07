@@ -5,9 +5,9 @@ stages:
     deps:
     - path: data/raw/
       hash: md5
-      md5: 07ef2711d22fbbf4fe979e8fc569c324.dir
+      md5: 7f0f259407d24e06208de6b7188309b7.dir
       size: 42020431
-      nfiles: 8
+      nfiles: 11
     - path: scripts/data_profiling.py
       hash: md5
       md5: 98d7696b01cbc29f704036003f62dea4
@@ -26,9 +26,9 @@ stages:
     deps:
     - path: data/raw/
       hash: md5
-      md5: 07ef2711d22fbbf4fe979e8fc569c324.dir
+      md5: 7f0f259407d24e06208de6b7188309b7.dir
       size: 42020431
-      nfiles: 8
+      nfiles: 11
     - path: scripts/data_cleaning.py
       hash: md5
       md5: 0907de1797bf27637f193b3e49dd0ab1
@@ -74,3 +74,64 @@ stages:
       hash: md5
       md5: c4246a43ad787d0f9f080816e581d905
       size: 21727918
+  check_quality:
+    cmd: DQ_WEBHOOK_URL="" uv run python -m scripts.quality_checks
+    deps:
+    - path: outputs/credit_enriched.csv
+      hash: md5
+      md5: c4246a43ad787d0f9f080816e581d905
+      size: 21727918
+    - path: scripts/quality_checks.py
+      hash: md5
+      md5: 06dca2ec2efdc04ce0746c4b15db09dc
+      size: 20752
+    outs:
+    - path: outputs/dq_check_results.json
+      hash: md5
+      md5: 51f2e1781ad99760479dd0d6c11d9771
+      size: 2203
+  analyze:
+    cmd: uv run python -m scripts.analysis
+    deps:
+    - path: outputs/credit_enriched.csv
+      hash: md5
+      md5: c4246a43ad787d0f9f080816e581d905
+      size: 21727918
+    - path: scripts/analysis.py
+      hash: md5
+      md5: 8a115293b97e01531dc331b19e98a87e
+      size: 15303
+    outs:
+    - path: outputs/plots/
+      hash: md5
+      md5: 56f4e19ab2a2b6759b18dc7c1e3f5b0e.dir
+      size: 291730
+      nfiles: 5
+    - path: outputs/portfolio_metrics.csv
+      hash: md5
+      md5: d901cc2210601de7d8c58d0720217f7a
+      size: 714
+  load_to_db:
+    cmd: uv run python -m scripts.load_to_db
+    deps:
+    - path: outputs/credit_enriched.csv
+      hash: md5
+      md5: c4246a43ad787d0f9f080816e581d905
+      size: 21727918
+    - path: outputs/customer_master.csv
+      hash: md5
+      md5: b1001259cdccb47a76ed69b3b54501a2
+      size: 22480213
+    - path: outputs/nps_responses.csv
+      hash: md5
+      md5: b2b4aff856a4c92dbb283501c6daf2a9
+      size: 769968
+    - path: scripts/load_to_db.py
+      hash: md5
+      md5: bc427dc61be2c294a6660516a9cc1642
+      size: 4992
+    outs:
+    - path: outputs/.db_loaded
+      hash: md5
+      md5: d41d8cd98f00b204e9800998ecf8427e
+      size: 0

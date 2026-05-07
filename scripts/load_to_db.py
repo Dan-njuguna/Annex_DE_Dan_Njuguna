@@ -1,6 +1,11 @@
 """
 Load cleaned CSV outputs into PostgreSQL for dbt transformations.
 
+Cleaning happens here so DB columns match dbt model expectations:
+  - credit_enriched.csv: rename date→snapshot_date, add ingested_at
+  - customer_master.csv:  add gender/citizenship/ingested_at as NULL
+  - nps_responses.csv:    rename verbose survey columns → concise names
+
 Usage:
     uv run python -m scripts.load_to_db
 
@@ -10,6 +15,7 @@ Requires PostgreSQL running (see docker-compose.yml) and env vars configured.
 import os
 import pandas as pd
 from pathlib import Path
+from datetime import datetime, timezone
 import psycopg2
 from psycopg2.extras import execute_values
 
@@ -24,9 +30,23 @@ DB_CONFIG = {
 }
 
 CSV_TABLES = {
-    "cleaned_summary.csv": "cleaned_credit_data",
+    "credit_enriched.csv": "cleaned_credit_data",
     "customer_master.csv": "customer_master",
     "nps_responses.csv": "nps_responses",
+}
+
+NPS_COLUMN_RENAME = {
+    "what_is_the_main_reason_for_your_score": "main_reason",
+    "what_is_one_thing_we_could_do_to_improve_your_experience_with_us": "improvement_feedback",
+    "are_you_happy_with_the_quality_and_performance_of_your_device": "happy_device",
+    "are_you_happy_with_the_service_and_support_provided_by_abc_phones": "happy_service",
+    "have_you_ever_experienced_a_delay_in_your_payment_reflecting_in_your_abc_account": "payment_delay",
+    "have_you_ever_had_difficulty_getting_assistance_from_abc_phones_customer_support_when_needed": "difficulty_support",
+    "have_you_experienced_any_battery_related_issues_with_your_mophones_device": "battery_issues",
+    "have_you_used_the_mophones_app_moapp_to_manage_your_account_or_make_payments": "used_app",
+    "which_communication_channel_do_you_prefer_when_contacting_mophones_for_inquiries_or_support": "preferred_channel",
+    "have_you_ever_had_your_phone_lock_despite_making_a_payment_on_time": "phone_lock_issue",
+    "any_other_feedback": "other_feedback",
 }
 
 
@@ -58,9 +78,25 @@ def load_csv_to_table(conn, csv_path, table_name):
     df = pd.read_csv(csv_path, low_memory=False)
     df.columns = [c.strip().lower().replace(" ", "_") for c in df.columns]
 
-    # Drop and recreate to ensure schema matches CSV exactly
+    # --- Per-table column cleaning ---
+
+    if table_name == "cleaned_credit_data":
+        df = df.rename(columns={"date": "snapshot_date"})
+
+    elif table_name == "customer_master":
+        df["citizenship"] = None
+        df["gender"] = None
+
+    elif table_name == "nps_responses":
+        df = df.rename(columns=NPS_COLUMN_RENAME)
+
+    # Add ingested_at timestamp for all tables
+    now = datetime.now(timezone.utc)
+    df["ingested_at"] = now
+
+    # Drop and recreate to ensure schema matches
     with conn.cursor() as cur:
-        cur.execute(f'DROP TABLE IF EXISTS "{table_name}"')
+        cur.execute(f'DROP TABLE IF EXISTS "{table_name}" CASCADE')
     conn.commit()
 
     ddl = infer_schema(df, table_name)
@@ -69,7 +105,6 @@ def load_csv_to_table(conn, csv_path, table_name):
     conn.commit()
     print(f"  Created table: {table_name}")
 
-    # Convert DataFrame rows to list of tuples
     rows = [tuple(None if pd.isna(v) else v for v in row) for row in df.to_numpy()]
     cols = [f'"{c}"' for c in df.columns]
 
@@ -97,14 +132,13 @@ def main():
     for csv_name, table_name in CSV_TABLES.items():
         csv_path = OUTPUT_DIR / csv_name
         if not csv_path.exists():
-            print(f"\n  SKIP: {csv_name} not found (run data_cleaning first)")
+            print(f"\n  SKIP: {csv_name} not found (run feature_engineering first)")
             continue
         print(f"\n  Loading {csv_name} → {table_name}...")
         load_csv_to_table(conn, csv_path, table_name)
 
     conn.close()
 
-    # DVC tracking marker
     marker = OUTPUT_DIR / ".db_loaded"
     marker.touch()
     print(
