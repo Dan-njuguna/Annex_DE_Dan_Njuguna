@@ -1,0 +1,26 @@
+name: abcphones
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: abcphones-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: abcphones
+      POSTGRES_PASSWORD: abcphones_secret
+      POSTGRES_DB: abcphones
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U abcphones -d abcphones"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  postgres_data:
+    driver: local
