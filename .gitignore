@@ -59,8 +59,6 @@ pipeline_design/*
 slides/*
 !slides/.gitkeep
 
-# DVC pipeline lock (auto-generated)
-dvc.lock
 
 # Docker
 .docker/

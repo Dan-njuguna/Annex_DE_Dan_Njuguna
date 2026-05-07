@@ -50,3 +50,27 @@ stages:
       hash: md5
       md5: b2b4aff856a4c92dbb283501c6daf2a9
       size: 769968
+  engineer_features:
+    cmd: uv run python -m scripts.feature_engineering
+    deps:
+    - path: outputs/cleaned_summary.csv
+      hash: md5
+      md5: 375880a5ff1b6bd0ff5600a90340e0a6
+      size: 15710387
+    - path: scripts/data_cleaning.py
+      hash: md5
+      md5: 0907de1797bf27637f193b3e49dd0ab1
+      size: 8771
+    - path: scripts/feature_engineering.py
+      hash: md5
+      md5: fe3a285fb89a8489d1eaf57b8b85042b
+      size: 6944
+    - path: scripts/utils.py
+      hash: md5
+      md5: 15be60576a66bd1f1620fd54087dc919
+      size: 1101
+    outs:
+    - path: outputs/credit_enriched.csv
+      hash: md5
+      md5: c4246a43ad787d0f9f080816e581d905
+      size: 21727918
