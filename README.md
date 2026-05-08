@@ -54,7 +54,7 @@ This starts PostgreSQL 16 on port 5432 with schemas `public`, `staging`, `interm
 ### Step 4: Place Raw Data
 
 ```bash
-unzip path/to/dataset.zip -d data/raw/
+unzip data/Credit Data (1)).zip -d data/raw/
 ```
 
 Expected structure after extraction:
@@ -87,13 +87,13 @@ profile_data ──→ clean_data ──→ engineer_features ──→ check_qu
 
 Outputs appear in `outputs/`:
 
-| Script                  | Produces                                                                        |
-| ----------------------- | ------------------------------------------------------------------------------- |
-| `data_profiling`      | `outputs/data_quality_report.md`                                              |
-| `data_cleaning`       | `outputs/cleaned_summary.csv`, `customer_master.csv`, `nps_responses.csv` |
-| `feature_engineering` | `outputs/credit_enriched.csv`                                                 |
-| `quality_checks`      | `outputs/dq_check_results.json`                                               |
-| `analysis`            | `outputs/portfolio_metrics.csv`, `outputs/plots/*.png`                      |
+| Script                  | Produces                                                                            |
+| ----------------------- | ----------------------------------------------------------------------------------- |
+| `data_profiling`      | `outputs/data_quality_report.md`                                                  |
+| `data_cleaning`       | `outputs/cleaned_summary.csv`, `customer_master.csv`, `nps_responses.csv`     |
+| `feature_engineering` | `outputs/credit_enriched.csv`                                                     |
+| `quality_checks`      | `outputs/dq_check_results.json`                                                   |
+| `analysis`            | `outputs/portfolio_metrics.csv`, `outputs/plots/*.png`                          |
 | `load_to_db`          | PostgreSQL tables (`cleaned_credit_data`, `customer_master`, `nps_responses`) |
 
 Before loading into PostgreSQL, `load_to_db` renames verbose survey columns, renames `date` → `snapshot_date`, adds `ingested_at` timestamps, and appends `gender`/`citizenship` columns so the DB schema matches dbt model expectations.
