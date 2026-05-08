@@ -27,7 +27,37 @@ cd Annex_DE_Dan
 uv venv && source .venv/bin/activate && uv sync
 ```
 
-### Step 2: Place Raw Data
+### Step 2: Configure Environment
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` if your PostgreSQL credentials differ from the defaults:
+
+```ini
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=abcphones
+DB_PASSWORD=abcphones_secret
+DB_NAME=abcphones
+```
+
+### Step 3: Start PostgreSQL
+
+```bash
+docker compose up -d
+```
+
+This starts PostgreSQL 16 on port 5432 with schemas `public`, `staging`, `intermediate`, `analytics`.
+
+### Step 4: Place Raw Data
+
+```bash
+unzip path/to/dataset.zip -d data/raw/
+```
+
+Expected structure after extraction:
 
 ```
 data/raw/
@@ -41,17 +71,18 @@ data/raw/
 └── nps/NPS Data (1).xlsx
 ```
 
-### Step 3: Run the ETL Pipeline
+### Step 5: Run the ETL Pipeline
 
 ```bash
 uv run dvc repro
 ```
 
-This runs all ETL stages in order:
+This runs all ETL stages in order (cleaning, feature engineering, quality checks, analysis, and DB load):
 
 ```
 profile_data ──→ clean_data ──→ engineer_features ──→ check_quality
-                                                         └──→ analyze
+                     │                                     └──→ analyze
+                     └──→ load_to_db (loads enriched CSV into PostgreSQL)
 ```
 
 Outputs appear in `outputs/`:
@@ -63,27 +94,11 @@ Outputs appear in `outputs/`:
 | `feature_engineering` | `outputs/credit_enriched.csv`                                                 |
 | `quality_checks`      | `outputs/dq_check_results.json`                                               |
 | `analysis`            | `outputs/portfolio_metrics.csv`, `outputs/plots/*.png`                      |
+| `load_to_db`          | PostgreSQL tables (`cleaned_credit_data`, `customer_master`, `nps_responses`) |
+
+Before loading into PostgreSQL, `load_to_db` renames verbose survey columns, renames `date` → `snapshot_date`, adds `ingested_at` timestamps, and appends `gender`/`citizenship` columns so the DB schema matches dbt model expectations.
 
 > **Alternate:** Run scripts individually with `uv run python -m scripts.<name>`.
-
-### Step 4: Start PostgreSQL
-
-```bash
-docker compose up -d
-```
-
-This starts PostgreSQL 16 on port 5432 with schemas `public`, `staging`, `intermediate`, `analytics`.
-
-### Step 5: Load Data into PostgreSQL
-
-```bash
-uv run python -m scripts.load_to_db
-```
-
-This reads `outputs/cleaned_summary.csv`, `customer_master.csv`, and `nps_responses.csv`,
-drops and recreates tables in PostgreSQL, then inserts the data.
-
-> **Note:** DVC includes a `load_to_db` stage that does this automatically. If you ran `dvc repro`, it already ran. Run manually only if you skipped DVC or want to reload.
 
 ### Step 6: Run dbt Transformations
 
