@@ -31,7 +31,15 @@ def compute_age_band(df_credit, df_customer):
     )
 
     df["age"] = (pd.Timestamp.now().year - df["date_of_birth"].dt.year).astype("Int64")
-    df.loc[df["age"] > 100, "age"] = pd.NA
+
+    out_of_range = (df["age"] < 18) | (df["age"] > 120)
+    n_out = out_of_range.sum()
+    if n_out > 0:
+        print(f"  WARNING: {n_out} rows with age outside 18-120 range")
+        print(f"    Min age: {df['age'].min()}, Max age: {df['age'].max()}")
+
+    df["age_out_of_range"] = out_of_range
+    df.loc[out_of_range, "age"] = pd.NA
 
     def age_band(age):
         if pd.isna(age) or age < 18:
