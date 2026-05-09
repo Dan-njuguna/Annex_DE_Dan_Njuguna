@@ -95,18 +95,18 @@ stages:
     deps:
     - path: outputs/credit_enriched.csv
       hash: md5
-      md5: c4246a43ad787d0f9f080816e581d905
-      size: 21727918
+      md5: 1370d645fe93ff86130fcc94d441323d
+      size: 21957528
     - path: scripts/analysis.py
       hash: md5
-      md5: 8a115293b97e01531dc331b19e98a87e
-      size: 15303
+      md5: f5feeaf04a64614eb95298dfbb30c1bb
+      size: 15965
     outs:
     - path: outputs/plots/
       hash: md5
-      md5: 56f4e19ab2a2b6759b18dc7c1e3f5b0e.dir
-      size: 291730
-      nfiles: 5
+      md5: 702daeb153ca18d70c8d4e05b598c56e.dir
+      size: 378144
+      nfiles: 6
     - path: outputs/portfolio_metrics.csv
       hash: md5
       md5: d901cc2210601de7d8c58d0720217f7a
@@ -116,8 +116,8 @@ stages:
     deps:
     - path: outputs/credit_enriched.csv
       hash: md5
-      md5: c4246a43ad787d0f9f080816e581d905
-      size: 21727918
+      md5: 1370d645fe93ff86130fcc94d441323d
+      size: 21957528
     - path: outputs/customer_master.csv
       hash: md5
       md5: b1001259cdccb47a76ed69b3b54501a2

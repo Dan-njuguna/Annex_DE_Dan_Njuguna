@@ -51,14 +51,6 @@ outputs/plots/
 outputs/.db_loaded
 !outputs/.gitkeep
 
-# Pipeline design (generated)
-pipeline_design/*
-!pipeline_design/.gitkeep
-
-# Slides (generated)
-slides/*
-!slides/.gitkeep
-
 
 # Docker
 .docker/
