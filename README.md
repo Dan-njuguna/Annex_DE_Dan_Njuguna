@@ -120,10 +120,7 @@ staging (bronze, views) ──→ intermediate (silver, views) ──→ analyti
 
 ### Step 7: Generate Outputs (Optional)
 
-```bash
-uv run python -m scripts.generate_diagram    # → pipeline_design/architecture.png
-uv run python -m scripts.generate_slides     # → slides/Annex_DE_Presentation.pdf
-```
+See `outputs/plots/` for analysis visualizations generated during the pipeline.
 
 ---
 
@@ -141,8 +138,6 @@ uv run python -m scripts.analysis
 
 # Utility scripts
 uv run python -m scripts.load_to_db
-uv run python -m scripts.generate_diagram
-uv run python -m scripts.generate_slides
 
 # DVC
 uv run dvc repro          # Full pipeline
@@ -235,8 +230,8 @@ Annex_DE_Dan/
 │   ├── quality_checks.py            #   DQ checks (pandera)
 │   ├── analysis.py                  #   Portfolio analysis
 │   ├── load_to_db.py                #   Load CSVs → PostgreSQL
-│   ├── generate_diagram.py          #   Architecture diagram
-│   └── generate_slides.py           #   Presentation PDF
+│   ├── utils.py                     #   Shared utilities
+│   └── __init__.py                  #   Package init
 ├── transform/                       # dbt project
 │   ├── dbt_project.yml
 │   ├── profiles.yml

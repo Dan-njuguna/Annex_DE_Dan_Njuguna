@@ -36,6 +36,14 @@ sns.set_style("whitegrid")
 plt.rcParams["figure.figsize"] = (12, 6)
 plt.rcParams["figure.dpi"] = 150
 
+RISK_COLORS = {
+    "Low": "#2ecc71",
+    "Medium": "#f39c12",
+    "High": "#e74c3c",
+    "Critical": "#c0392b",
+}
+RISK_ORDER = ["Low", "Medium", "High", "Critical"]
+
 
 # ============================================================================
 # QUESTION 3A: Portfolio Health
@@ -140,10 +148,9 @@ def question_3a_portfolio_health(df):
         "high_risk_pct",
         "critical_risk_pct",
     ]
-    labels = ["Low", "Medium", "High", "Critical"]
-    colors = ["#2ecc71", "#f39c12", "#e74c3c", "#c0392b"]
+    colors = [RISK_COLORS[k] for k in RISK_ORDER]
     bottom = np.zeros(len(metrics))
-    for cat, label, color in zip(categories, labels, colors):
+    for cat, label, color in zip(categories, RISK_ORDER, colors):
         values = [m[cat] for m in metrics]
         ax.bar(dates, values, bottom=bottom, label=label, color=color)
         bottom += np.array(values)
@@ -163,7 +170,9 @@ def question_3a_portfolio_health(df):
     print(age_risk_pct.to_string())
 
     fig, ax = plt.subplots()
-    age_risk_pct.plot(kind="bar", stacked=True, ax=ax, color=colors)
+    age_risk_pct[RISK_ORDER].plot(
+        kind="bar", stacked=True, ax=ax, color=[RISK_COLORS[k] for k in RISK_ORDER]
+    )
     ax.set_xlabel("Age Band")
     ax.set_ylabel("Proportion (%)")
     ax.set_title("Risk Category by Age Band")
@@ -182,6 +191,20 @@ def question_3a_portfolio_health(df):
     )
     income_risk_pct = income_risk.div(income_risk.sum(axis=1), axis=0) * 100
     print(income_risk_pct.to_string())
+
+    fig, ax = plt.subplots()
+    income_risk_pct[RISK_ORDER].plot(
+        kind="bar", stacked=True, ax=ax, color=[RISK_COLORS[k] for k in RISK_ORDER]
+    )
+    ax.set_xlabel("Avg Monthly Income Band")
+    ax.set_ylabel("Proportion (%)")
+    ax.set_title("Risk Category by Income Band")
+    ax.legend(loc="upper right")
+    ax.tick_params(axis="x", rotation=45)
+    plt.tight_layout()
+    plt.savefig(PLOTS_DIR / "risk_by_income_band.png")
+    plt.close()
+    print("  Saved risk_by_income_band.png")
 
     return df_metrics
 
@@ -280,7 +303,7 @@ def question_3b_credit_nps_relationship(df, df_nps):
         y="nps_score",
         order=risk_order,
         ax=axes[0],
-        palette=["#2ecc71", "#f39c12", "#e74c3c", "#c0392b"],
+        palette=[RISK_COLORS[k] for k in RISK_ORDER],
     )
     axes[0].set_title("NPS Score Distribution by Risk Category")
     axes[0].set_xlabel("Risk Category")
