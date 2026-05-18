@@ -22,8 +22,8 @@ All dependencies are managed via `pyproject.toml` + `uv.lock`.
 ### Step 1: Clone & Install
 
 ```bash
-git clone <repo-url> Annex_DE_Dan
-cd Annex_DE_Dan
+git clone git@github.com:Dan-njuguna/abc_phones_data_analytics.git
+cd abc_phones_data_analytics
 uv venv && source .venv/bin/activate && uv sync
 ```
 
@@ -217,7 +217,7 @@ DB_NAME=abcphones
 ## Repository Structure
 
 ```
-Annex_DE_Dan/
+abc_phones_data_analysis/
 ├── README.md
 ├── pyproject.toml, uv.lock          # Python deps (uv)
 ├── dvc.yaml, .dvc/                  # DVC pipeline
@@ -245,7 +245,7 @@ Annex_DE_Dan/
 ├── pipeline_design/
 │   └── architecture.png             # Architecture diagram
 ├── slides/
-│   └── Annex_DE_Presentation.pdf    # Presentation deck
+│   └── ABC_Phones.pdf    # Presentation deck
 ├── outputs/                         # Generated artifacts
 ├── data/raw/                        # Source data
 └── migrations/

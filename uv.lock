@@ -160,7 +160,7 @@ wheels = [
 ]
 
 [[package]]
-name = "annex-de-dan"
+name = "abc-phones-data-analytics"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
